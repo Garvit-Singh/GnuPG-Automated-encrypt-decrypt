@@ -64,3 +64,4 @@ deletekey:
 
 uninstall:
 	sudo apt purge gnupg
+	sudo apt purge tree
