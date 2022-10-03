@@ -37,12 +37,18 @@ importpublickey:
 	gpg --import ./publickey/$$pubkey
 
 encryptdocument:
-	@read -p "Enter recipient mail and document to encrypt: " recipientmail doc; \
-	gpg -vv --homedir=~/.gnupg --recipient $$recipientmail --output ./encrypted_documents/$$doc --encrypt ./documents/$$doc
+	@read -p "Enter recipient mail and document to encrypt and local user mail: " recipientmail doc lu; \
+	gpg -vv --homedir=~/.gnupg --recipient $$recipientmail --output ./encrypted_documents/$$doc --encrypt ./documents/$$doc;\
+	gpg --output ./signed_documents/$$doc --local-user $$lu --sign ./encrypted_documents/$$doc 
+
+verifydocument:
+	@read -p "Enter document to verify: " doc; \
+	gpg --verify ./signed_documents/$$doc
 
 decryptdocument: 
 	@read -p "Enter document to decrypt: " doc; \
-	gpg --homedir=~/.gnupg --output ./decrypted_documents/$$doc --decrypt ./encrypted_documents/$$doc
+	gpg --output ./unsigned_decrypt/$$doc --decrypt ./signed_documents/$$doc; \
+	gpg --output ./decrypted_documents/$$doc --decrypt ./unsigned_decrypt/$$doc
 
 folderstructure:
 	tree
