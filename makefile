@@ -47,11 +47,12 @@ decryptdocument:
 folderstructure:
 	tree
 
-deletekey:
+deletescrkey:
 	@read -p "Enter userid to delete: " uid; \
 	gpg --delete-secret-key $$uid
 
-deletepubkey:
+deletekey:
+	make deletescrkey
 	@read -p "Enter userid to delete: " uid; \
 	gpg --delete-key $$uid
 
