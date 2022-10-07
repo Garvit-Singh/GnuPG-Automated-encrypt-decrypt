@@ -1,2 +1,0 @@
-Let's encrypt the document to protect data from cipher attack. 
-Next let us sign it for data integrity and authentication.

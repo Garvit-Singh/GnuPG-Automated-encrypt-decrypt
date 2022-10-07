@@ -1,11 +1,17 @@
 expDt = 1
+env = dnf
 
 setup:
-	sudo apt-get install tree
-	sudo apt-get install gnupg
+	sudo env install tree
+	sudo env install gnupg
+	mkdir packaged
+	mkdir unpackaged
 
 initfile: 
-	echo "Key-Type: RSA\nKey-Length: 1024\nSubkey-Type: RSA\nSubkey-Length: 1024" > .config
+	@echo "Key-Type: RSA" > .config
+	@echo "Key-Length: 1024" >> .config
+	@echo "Subkey-Type: RSA" >> .config
+	@echo "Subkey-Length: 1024" >> .config
 fileop:
 	make initfile
 	@read -p "Enter Username: " usrname; \
@@ -48,7 +54,28 @@ verifydocument:
 decryptdocument: 
 	@read -p "Enter document to decrypt: " doc; \
 	gpg --output ./unsigned_decrypt/$$doc --decrypt ./signed_documents/$$doc; \
+	gpg --verify ./unsigned_decrypt/$$doc; \
 	gpg --output ./decrypted_documents/$$doc --decrypt ./unsigned_decrypt/$$doc
+
+hashfile:
+	@read -p "Enter File Name: " doc; \
+	gpg --output ./doc.hash --print-md sha1 ./documents/$$doc
+
+packdocument:
+	@read -p "Enter recipient mail and document to encrypt and local user mail: " recipientmail doc lu; \
+	mkdir -p ./packaged/$$doc; \
+	gpg -vv --homedir=~/.gnupg --recipient $$recipientmail --output ./packaged/$$doc/$$doc --encrypt ./documents/$$doc;\
+	gpg --output ./packaged/$$doc/s_$$doc --local-user $$lu --sign ./packaged/$$doc/$$doc; \
+	zip -r ./packaged/$$doc.zip ./packaged/$$doc; \
+	rm -rf ./packaged/$$doc
+
+unpackdocument:
+	@read -p "Enter document to decrypt: " doc; \
+	unzip -j ./packaged/$$doc.zip -d ./unpackaged; \
+	gpg --verify .unpackaged/s_$$doc; \
+	gpg --output ./packaged/$$doc --decrypt ./signed_documents/s_$$doc; \
+	gpg --output ./decrypted_documents/$$doc --decrypt ./unpackaged/$$doc
+	rm ./unpackaged/$$doc*
 
 folderstructure:
 	tree
