@@ -1,0 +1,2 @@
+./documents/pikachutopanda.txt: B083 A92B 4431 5B22 7C39  2C23 7B1A 3E2E 9045
+                                EC05
