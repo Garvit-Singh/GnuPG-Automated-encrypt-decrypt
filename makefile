@@ -104,5 +104,4 @@ folderstructure:
 
 
 uninstall:
-	sudo apt purge gnupg
-	sudo apt purge tree
+	sudo ${env} remove tree
